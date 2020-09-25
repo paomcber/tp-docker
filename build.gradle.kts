@@ -65,7 +65,11 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+
 tasks.withType<Test> {
+    systemProperty("database.url", project.property("database.url"))
+    systemProperty("database.username", project.property("database.username"))
+    systemProperty("database.password", project.property("database.password"))
     useJUnitPlatform()
 }
 

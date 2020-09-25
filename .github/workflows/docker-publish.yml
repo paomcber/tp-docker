@@ -6,23 +6,20 @@ on:
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
-  # Run tests for any PRs.
-  pull_request:
-
-env:
-  # TODO: Change variable to your image's name.
-  IMAGE_NAME: paomcber/tp-devops
-
 jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-latest
-
+    services:
+      db:
+        image: postgres
+      ports: 
+          - 5432:5432
+      env:
+        POSTGRES_PASSWORD: tp_devops
+        POSTGRES_USER: tp_devops
+        POSTGRES_DB: tp_devops
     steps:
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -31,33 +28,21 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: |
-        ./gradlew -q build_docker
-        docker-compose up -d
-        ./gradlew check --stacktrace
-        docker-compose down
-          
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    needs: test
+        run: ./gradlew assemble
 
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build image
-        run: docker build ./docker --tag $IMAGE_NAME
-
-      - name: Log in to docker hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Run tests
+        run: ./gradlew check
 
       - name: Push to Docker Hub
-        run: docker push paomcber/tp-devops:latest
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: paomcber/tp-devops
+          tag_with_ref: true
 
+      # - name: Build image
+      #   run: docker build ./docker --tag paomcber/tp-devops
 
 
 
