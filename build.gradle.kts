@@ -72,3 +72,19 @@ tasks.withType<Test> {
 tasks.withType<Wrapper> {
     gradleVersion = "5.6"
 }
+
+tasks.register<Exec>("build_assemble") {
+    commandLine("./gradlew","assemble")
+}
+
+tasks.register<Copy>("build_copy") {
+    from("./build/libs/tp-docker-1.0.0.jar")
+    into("./docker/")
+}
+
+tasks.register<Exec>("build_docker") {
+    dependsOn("build_assemble")
+    dependsOn("build_copy")
+
+    commandLine("docker", "build", "./docker")
+}
