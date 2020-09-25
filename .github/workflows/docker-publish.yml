@@ -21,15 +21,18 @@ jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
-    runs-on: openjdk:11
+    runs-on: ubuntu-latest
+    
+    container: 
+      image: openjdk:11
 
-    steps:
-      - uses: actions/checkout@v2
+      steps:
+        - uses: actions/checkout@v2
 
-      - name: Run tests
-        run: |
-          ./gradlew -q build_docker
-          ./gradlew check
+        - name: Run tests
+          run: |
+            ./gradlew -q build_docker
+            ./gradlew check
           
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
