@@ -31,7 +31,11 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: ./gradlew check --stacktrace
+        run: |
+        ./gradlew -q build_docker
+        docker-compose up -d
+        ./gradlew check --stacktrace
+        docker-compose down
           
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
