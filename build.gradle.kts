@@ -86,5 +86,5 @@ tasks.register<Exec>("build_docker") {
     dependsOn("build_assemble")
     dependsOn("build_copy")
 
-    commandLine("docker", "build", "./docker")
+    commandLine("docker", "build", "./docker") 
 }
