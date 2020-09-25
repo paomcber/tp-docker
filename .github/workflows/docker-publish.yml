@@ -27,7 +27,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run tests
-        run: ./gradlew check
+        run: |
+          ./gradlew -q build_docker
+          ./gradlew check
+          
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
   push:
@@ -48,3 +51,20 @@ jobs:
 
       - name: Push to Docker Hub
         run: docker push paomcber/tp-devops:latest
+
+
+
+
+
+
+
+
+
+
+
+        # if [ -f docker-compose.test.yml ]; then
+        #     docker-compose --file docker-compose.test.yml build
+        #     docker-compose --file docker-compose.test.yml run sut
+        #   else
+        #     docker build ./docker
+        #   fi
